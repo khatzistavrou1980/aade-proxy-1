@@ -1,21 +1,25 @@
 const express = require("express");
 const axios = require("axios");
-const bodyParser = require("body-parser");
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(bodyParser.json());
+// Δέχεται raw XML ως string
+app.use(express.text({ type: "text/xml" }));
 
 app.post("/", async (req, res) => {
-  const { afm } = req.body;
+  const xml = req.body;
+
+  // Πρόχειρο parsing AFM
+  const match = xml.match(/<ws:afm>(\d+)<\/ws:afm>/);
+  const afm = match ? match[1] : null;
 
   if (!afm) {
     return res.status(400).json({ error: "AFM is required" });
   }
 
   try {
-    // Προσωρινή απάντηση mock
+    // Εδώ απαντά mock XML
     const response = `<response><afm>${afm}</afm><valid>true</valid></response>`;
     res.set("Content-Type", "application/xml");
     res.send(response);
