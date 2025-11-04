@@ -35,7 +35,7 @@ app.post("/", async (req, res) => {
 
   try {
     const response = await axios.post(
-      "https://www1.gsis.gr/wsgsis/RgWsPublic2/RgWsPublic2",
+      "https://www1.gsis.gr/wsgsis/RgWsPublic2/RgWsPublic2.wsdl",
       soapBody,
       {
         headers: {
