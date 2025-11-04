@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Βάλε εδώ τα credentials σου από την ΑΑΔΕ
+// Credentials από την ΑΑΔΕ
 const AADE_USERNAME = "user123597070";
 const AADE_PASSWORD = "123597070A";
 
@@ -35,7 +35,7 @@ app.post("/", async (req, res) => {
 
   try {
     const response = await axios.post(
-      "https://www1.gsis.gr/wsgsis/RgWsPublic2/RgWsPublic2.wsdl",
+      "https://www1.gsis.gr/wsgsis/RgWsPublic2/RgWsPublic2Port",
       soapBody,
       {
         headers: {
