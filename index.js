@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Credentials από AADE
+// Βάλε εδώ τα credentials σου από την ΑΑΔΕ
 const AADE_USERNAME = "user123597070";
 const AADE_PASSWORD = "123597070A";
 
@@ -19,27 +19,28 @@ app.post("/", async (req, res) => {
   }
 
   const soapBody = `
-  <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://rgwspublic2.ws.public2.rgws.gsis.gr/">
-    <soapenv:Header/>
-    <soapenv:Body>
-      <ws:rgWsPublicAfmMethod>
-        <ws:INPUT_REC>
-          <ws:afm>${afm}</ws:afm>
-        </ws:INPUT_REC>
-        <ws:USERNAME>${AADE_USERNAME}</ws:USERNAME>
-        <ws:PASSWORD>${AADE_PASSWORD}</ws:PASSWORD>
-      </ws:rgWsPublicAfmMethod>
-    </soapenv:Body>
-  </soapenv:Envelope>`;
+    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.gsis.gr/">
+      <soapenv:Header/>
+      <soapenv:Body>
+        <ws:rgWsPublicAfmMethod>
+          <ws:RgWsPublicInputRt_in>
+            <ws:afm>${afm}</ws:afm>
+          </ws:RgWsPublicInputRt_in>
+          <ws:username>${AADE_USERNAME}</ws:username>
+          <ws:password>${AADE_PASSWORD}</ws:password>
+        </ws:rgWsPublicAfmMethod>
+      </soapenv:Body>
+    </soapenv:Envelope>
+  `;
 
   try {
     const response = await axios.post(
-      "https://www1.gsis.gr/wsaade/RgWsPublic2/RgWsPublic2",
+      "https://www1.gsis.gr/wsgsis/RgWsPublic2/RgWsPublic2",
       soapBody,
       {
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
-          SOAPAction: ""
+          "SOAPAction": "rgWsPublicAfmMethod"
         },
         timeout: 10000
       }
