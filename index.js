@@ -5,9 +5,10 @@ const bodyParser = require("body-parser");
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Credentials από την ΑΑΔΕ
-const AADE_USERNAME = "user123597070";
-const AADE_PASSWORD = "123597070A";
+// Credentials ΑΑΔΕ
+const AADE_USERNAME = "KORONI2021";
+const AADE_PASSWORD = "XRISTINA2021";
+const AADE_AFM = "123597070";
 
 app.use(bodyParser.json());
 
@@ -25,6 +26,7 @@ app.post("/", async (req, res) => {
         <ws:rgWsPublicAfmMethod>
           <ws:RgWsPublicInputRt_in>
             <ws:afm>${afm}</ws:afm>
+            <ws:afm_called_by>${AADE_AFM}</ws:afm_called_by>
           </ws:RgWsPublicInputRt_in>
           <ws:username>${AADE_USERNAME}</ws:username>
           <ws:password>${AADE_PASSWORD}</ws:password>
@@ -61,3 +63,4 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
