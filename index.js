@@ -10,8 +10,7 @@ app.use(express.json());
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-const WSDL_PATH = path.join(__dirname, 'RgWsPublic2.wsdl');
+const WSDL_URL = path.join(__dirname, 'RgWsPublic2.wsdl');
 
 app.post('/verify-afm', (req, res) => {
   const { afmCalledBy, afmCalledFor } = req.body;
@@ -34,7 +33,7 @@ app.post('/verify-afm', (req, res) => {
     }
   };
 
-  soap.createClient(WSDL_PATH, options, (err, client) => {
+  soap.createClient(WSDL_URL, options, (err, client) => {
     if (err) return res.status(500).json({ error: 'SOAP client error', details: err.toString() });
 
     client.setSecurity(new soap.BasicAuthSecurity(process.env.AADE_USERNAME, process.env.AADE_PASSWORD));
@@ -54,4 +53,3 @@ app.post('/verify-afm', (req, res) => {
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`AADE proxy listening on port ${port}`));
-
