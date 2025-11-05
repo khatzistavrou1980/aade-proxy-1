@@ -1,12 +1,17 @@
 import express from 'express';
 import { soap } from 'strong-soap';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 const app = express();
 app.use(express.json());
 
-const WSDL_URL = 'https://www1.aade.gr/tameiakes/mywebservice/RgWsPublic2/RgWsPublic2.wsdl';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const WSDL_PATH = path.join(__dirname, 'RgWsPublic2.wsdl');
 
 app.post('/verify-afm', (req, res) => {
   const { afmCalledBy, afmCalledFor } = req.body;
@@ -16,10 +21,7 @@ app.post('/verify-afm', (req, res) => {
   }
 
   const requestArgs = {
-    RgWsPublic2InputRt_in: {
-      afmCalledBy,
-      afmCalledFor
-    },
+    RgWsPublic2InputRt_in: { afmCalledBy, afmCalledFor },
     RgWsPublic2BasicRt_out: {},
     RgWsPublic2BranchRt_out: {},
     pCallSeqId_out: {},
@@ -32,24 +34,18 @@ app.post('/verify-afm', (req, res) => {
     }
   };
 
-  soap.createClient(WSDL_URL, options, (err, client) => {
-    if (err) {
-      return res.status(500).json({ error: 'SOAP client error', details: err.toString() });
-    }
+  soap.createClient(WSDL_PATH, options, (err, client) => {
+    if (err) return res.status(500).json({ error: 'SOAP client error', details: err.toString() });
 
     client.setSecurity(new soap.BasicAuthSecurity(process.env.AADE_USERNAME, process.env.AADE_PASSWORD));
 
     client.rgWsPublic2AfmMethod(requestArgs, (err, result) => {
-      if (err) {
-        return res.status(500).json({ error: 'SOAP request failed', details: err.toString() });
-      }
+      if (err) return res.status(500).json({ error: 'SOAP request failed', details: err.toString() });
 
       const response = result?.RgWsPublic2Rt_out || {};
       const errorMsg = result?.pErrorRec_out?.errorDescr;
 
-      if (errorMsg) {
-        return res.status(400).json({ error: errorMsg });
-      }
+      if (errorMsg) return res.status(400).json({ error: errorMsg });
 
       res.json({ response });
     });
