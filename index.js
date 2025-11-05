@@ -34,17 +34,26 @@ app.post('/verify-afm', (req, res) => {
   };
 
   soap.createClient(WSDL_URL, options, (err, client) => {
-    if (err) return res.status(500).json({ error: 'SOAP client error', details: err.toString() });
+    if (err) {
+      console.error('SOAP client error:', err);
+      return res.status(500).json({ error: 'SOAP client error', details: err.toString() });
+    }
 
     client.setSecurity(new soap.BasicAuthSecurity(process.env.AADE_USERNAME, process.env.AADE_PASSWORD));
 
-    client.rgWsPublic2AfmMethod(requestArgs, (err, result) => {
-      if (err) return res.status(500).json({ error: 'SOAP request failed', details: err.toString() });
+    client.rgWsPublic2AfmMethod(requestArgs, (err, result, envelope, soapHeader) => {
+      if (err) {
+        console.error('SOAP request failed:', err);
+        console.error('Envelope received from AADE:\n', envelope);
+        return res.status(500).json({ error: 'SOAP request failed', details: err.toString(), envelope });
+      }
 
       const response = result?.RgWsPublic2Rt_out || {};
       const errorMsg = result?.pErrorRec_out?.errorDescr;
 
-      if (errorMsg) return res.status(400).json({ error: errorMsg });
+      if (errorMsg) {
+        return res.status(400).json({ error: errorMsg });
+      }
 
       res.json({ response });
     });
