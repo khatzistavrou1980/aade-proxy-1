@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="http://rgwspublic2.ws.public2.ws.taxinet.gr/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             name="RgWsPublic2"
+             targetNamespace="http://rgwspublic2.ws.public2.ws.taxinet.gr/">
+
+  <types>
+    <xsd:schema targetNamespace="http://rgwspublic2.ws.public2.ws.taxinet.gr/"
+                elementFormDefault="qualified">
+      <xsd:element name="rgWsPublic2AfmMethod">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="RgWsPublic2InputRt_in" type="tns:rgWsPublic2InputRtUser" />
+            <xsd:element name="RgWsPublic2BasicRt_out" type="tns:rgWsPublic2BasicRtUser" />
+            <xsd:element name="RgWsPublic2BranchRt_out" type="tns:rgWsPublic2BranchRtUserArray" />
+            <xsd:element name="pCallSeqId_out" type="xsd:decimal" />
+            <xsd:element name="pErrorRec_out" type="tns:rgWsPublic2RtUser" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:complexType name="rgWsPublic2InputRtUser">
+        <xsd:sequence>
+          <xsd:element name="afmCalledBy" type="xsd:string" />
+          <xsd:element name="afmCalledFor" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:complexType name="rgWsPublic2BasicRtUser">
+        <xsd:sequence>
+          <xsd:element name="onomasia" type="xsd:string" />
+          <xsd:element name="doyDescr" type="xsd:string" />
+          <xsd:element name="commerTitle" type="xsd:string" />
+          <xsd:element name="legalStatusDescr" type="xsd:string" />
+          <xsd:element name="firmFlagDescr" type="xsd:string" />
+          <xsd:element name="deactivationFlag" type="xsd:string" />
+          <xsd:element name="deactivationFlagDescr" type="xsd:string" />
+          <xsd:element name="postalAddress" type="xsd:string" />
+          <xsd:element name="postalAddressNo" type="xsd:string" />
+          <xsd:element name="postalZipCode" type="xsd:string" />
+          <xsd:element name="postalAreaDescription" type="xsd:string" />
+          <xsd:element name="registDate" type="xsd:string" />
+          <xsd:element name="stopDate" type="xsd:string" />
+          <xsd:element name="doy" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:complexType name="rgWsPublic2BranchRtUser">
+        <xsd:sequence>
+          <xsd:element name="branchActivityDescr" type="xsd:string" />
+          <xsd:element name="branchAddress" type="xsd:string" />
+          <xsd:element name="branchZipCode" type="xsd:string" />
+          <xsd:element name="branchMunicipality" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:complexType name="rgWsPublic2BranchRtUserArray">
+        <xsd:sequence>
+          <xsd:element name="item" type="tns:rgWsPublic2BranchRtUser" minOccurs="0" maxOccurs="unbounded" />
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:complexType name="rgWsPublic2RtUser">
+        <xsd:sequence>
+          <xsd:element name="errorCode" type="xsd:string" />
+          <xsd:element name="errorDescr" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+  </types>
+
+  <message name="RgWsPublic2Request">
+    <part name="parameters" element="tns:rgWsPublic2AfmMethod" />
+  </message>
+
+  <message name="RgWsPublic2Response">
+    <part name="parameters" element="tns:rgWsPublic2AfmMethod" />
+  </message>
+
+  <portType name="RgWsPublic2PortType">
+    <operation name="rgWsPublic2AfmMethod">
+      <input message="tns:RgWsPublic2Request" />
+      <output message="tns:RgWsPublic2Response" />
+    </operation>
+  </portType>
+
+  <binding name="RgWsPublic2Binding" type="tns:RgWsPublic2PortType">
+    <soap:binding style="document"
+                  transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="rgWsPublic2AfmMethod">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+
+  <service name="RgWsPublic2Service">
+    <documentation>AADE Public Registry Lookup</documentation>
+    <port name="RgWsPublic2Port" binding="tns:RgWsPublic2Binding">
+      <soap:address location="https://www1.aade.gr/tameiakes/mywebservice/RgWsPublic2" />
+    </port>
+  </service>
+</definitions>
