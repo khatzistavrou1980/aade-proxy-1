@@ -5,28 +5,24 @@ const bodyParser = require("body-parser");
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Credentials ΑΑΔΕ
+// Σωστά credentials σου
 const AADE_USERNAME = "KORONI2021";
 const AADE_PASSWORD = "XRISTINA2021";
-const AADE_AFM = "123597070";
 
 app.use(bodyParser.json());
 
 app.post("/", async (req, res) => {
   const { afm } = req.body;
-
-  if (!afm) {
-    return res.status(400).json({ error: "AFM is required" });
-  }
+  if (!afm) return res.status(400).json({ error: "AFM is required" });
 
   const soapBody = `
-    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.gsis.gr/">
+    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                      xmlns:ws="http://ws.gsis.gr/">
       <soapenv:Header/>
       <soapenv:Body>
         <ws:rgWsPublicAfmMethod>
           <ws:RgWsPublicInputRt_in>
             <ws:afm>${afm}</ws:afm>
-            <ws:afm_called_by>${AADE_AFM}</ws:afm_called_by>
           </ws:RgWsPublicInputRt_in>
           <ws:username>${AADE_USERNAME}</ws:username>
           <ws:password>${AADE_PASSWORD}</ws:password>
@@ -42,7 +38,7 @@ app.post("/", async (req, res) => {
       {
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
-          "SOAPAction": "rgWsPublicAfmMethod"
+          "SOAPAction": "" // Κενό όπως απαιτείται συχνά για την ΑΑΔΕ
         },
         timeout: 10000
       }
@@ -52,7 +48,11 @@ app.post("/", async (req, res) => {
     res.send(response.data);
   } catch (error) {
     console.error("SOAP Error:", error.message);
-    res.status(500).json({ error: "AADE service error" });
+    if (error.response) {
+      res.status(500).send(error.response.data); // Επιστροφή ολόκληρης SOAP απάντησης για debugging
+    } else {
+      res.status(500).json({ error: "AADE service unreachable" });
+    }
   }
 });
 
